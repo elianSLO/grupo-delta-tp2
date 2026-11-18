@@ -6,10 +6,24 @@ import com.inmortales.modelo.Pareja;
 
 public class HeraldoImperial implements ObservadorEventos {
 
-    @Override
-    public void actualizar(Evento evento) {
-        System.out.println(evento.getDescripcion());
-    }
+	private static final String SEPARADOR =
+		    "\n" + "-".repeat(80) + "\n";
+
+		@Override
+		public void actualizar(Evento evento) {
+
+		    if (evento.getTipo() == TipoEvento.INICIO_COMBATE) {
+		        System.out.println(SEPARADOR);
+		        System.out.println("INICIO DEL COMBATE");
+		    }
+
+		    System.out.println(evento.getDescripcion());
+
+		    if (evento.getTipo() == TipoEvento.FIN_COMBATE) {
+		        System.out.println("FIN DEL COMBATE");
+		        System.out.println(SEPARADOR);
+		    }
+		}
     
     public void presentarPosiciones(List<ResultadoPareja> posiciones) {
         System.out.println("\n========== TABLA DE POSICIONES ==========");

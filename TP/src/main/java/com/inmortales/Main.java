@@ -2,6 +2,7 @@ package com.inmortales;
 
 import java.util.List;
 
+
 import com.inmortales.combate.ConfiguracionCombate;
 import com.inmortales.combate.estrategia.EstrategiaPredeterminada;
 import com.inmortales.eventos.CronistaSecta;
@@ -13,6 +14,7 @@ import com.inmortales.modelo.EfectoDanio;
 import com.inmortales.modelo.EfectoDanioYEnergia;
 import com.inmortales.modelo.EfectoDefensivo;
 import com.inmortales.modelo.EfectoRecuperacion;
+import com.inmortales.modelo.EfectoVeneno;
 import com.inmortales.modelo.Escuela;
 import com.inmortales.modelo.Pareja;
 import com.inmortales.modelo.Tecnica;
@@ -26,6 +28,13 @@ public class Main {
     public static void main(String[] args) {
 
         // 1. Crear las técnicas
+    	
+    	Tecnica veneno = new Tecnica(
+    		    "Veneno de la Serpiente Celestial",
+    		    8,
+    		    new EfectoVeneno(5, 3)
+    		);
+    	
         Tecnica corteCelestial = new Tecnica(
             "Corte Celestial", 8, new EfectoDanio(20)
         );
@@ -64,7 +73,7 @@ public class Main {
 
         Escuela escuelaVacio = new Escuela(
             "Palacio del Vacío",
-            List.of(dominioVacio, meditacion),
+            List.of(dominioVacio, meditacion, veneno),
             List.of(anillo)
         );
 
@@ -138,10 +147,9 @@ public class Main {
         torneo.inscribirPareja(pareja4);
 
         // 9. Iniciar el torneo
-        Pareja campeona = torneo.iniciar();
+        torneo.iniciar();
 
         // 10. Mostrar resultados
-        heraldo.proclamarCampeona(campeona);
         heraldo.presentarPosiciones(cronista.obtenerPosiciones());
     }
 

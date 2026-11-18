@@ -88,20 +88,25 @@ public class Combate {
         determinarGanadora();
 
         publicarEvento(
-            TipoEvento.FIN_COMBATE,
-            "Finaliza el combate. Gana la pareja "
-                + ganadora.getId() + ".",
-            null,
-            null,
-            pareja1.getId(),
-            pareja1.getVidaTotal(),
-            pareja2.getId(),
-            pareja2.getVidaTotal(),
-            ganadora.getId()
-        );
+                TipoEvento.FIN_COMBATE,
+                "Finaliza el combate de la ronda " + numeroRonda
+                    + ". Gana la pareja " + ganadora.getId()
+                    + ". Vida total: pareja " + pareja1.getId()
+                    + " = " + pareja1.getVidaTotal()
+                    + ", pareja " + pareja2.getId()
+                    + " = " + pareja2.getVidaTotal() + ".",
+                null,
+                null,
+                pareja1.getId(),
+                pareja1.getVidaTotal(),
+                pareja2.getId(),
+                pareja2.getVidaTotal(),
+                ganadora.getId()
+            );
 
-        return ganadora;
-    }
+            return ganadora;
+        }
+
     
     private void publicarEvento(
             TipoEvento tipo,
@@ -167,6 +172,13 @@ public class Combate {
     }
 
     private void ejecutarTurno(Combatiente combatiente) {
+
+        combatiente.aplicarEfectosInicioTurno();
+
+        if (!combatiente.estaEnPie()) {
+            verificarEliminacion(combatiente);
+            return;
+        }
 
         Pareja pareja = obtenerPareja(combatiente);
         Pareja rival = obtenerRival(pareja);
@@ -246,18 +258,56 @@ public class Combate {
 
         registro.registrarUso(ejecutor, tecnica);
 
+        int vidaAnterior = objetivo.getVida();
+        int energiaAnterior = objetivo.getEnergia();
+
         tecnica.ejecutar(ejecutor, objetivo);
 
         publicarEvento(
             TipoEvento.USO_TECNICA,
             ejecutor.getNombre() + " utiliza " + tecnica.getNombre()
-                + " sobre " + objetivo.getNombre() + ".",
+                + " sobre " + objetivo.getNombre()
+                + describirEfecto(objetivo, vidaAnterior, energiaAnterior)
+                + ".",
             ejecutor.getId(),
             objetivo.getId(),
             null, null, null, null, null
         );
 
         verificarEliminacion(objetivo);
+    }
+    
+    private String describirEfecto(
+            Combatiente objetivo,
+            int vidaAnterior,
+            int energiaAnterior) {
+
+        int diferenciaVida = objetivo.getVida() - vidaAnterior;
+        int energiaQuitada = energiaAnterior - objetivo.getEnergia();
+
+        StringBuilder detalle = new StringBuilder();
+
+        if (diferenciaVida < 0) {
+            detalle.append(" y causa ")
+                .append(-diferenciaVida)
+                .append(" puntos de daño");
+        } else if (diferenciaVida > 0) {
+            detalle.append(" y recupera ")
+                .append(diferenciaVida)
+                .append(" puntos de vida");
+        }
+
+        if (energiaQuitada > 0) {
+            detalle.append(" y le quita ")
+                .append(energiaQuitada)
+                .append(" puntos de energía");
+        }
+
+        if (detalle.length() == 0 && objetivo.tieneDefensaActiva()) {
+            detalle.append(" y activa su defensa");
+        }
+
+        return detalle.toString();
     }
 
     private void verificarEliminacion(Combatiente combatiente) {

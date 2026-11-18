@@ -21,6 +21,9 @@ public abstract class Combatiente {
     private int vida;
     private int energia;
     private boolean defensaActiva;
+    
+    private int danioVenenoPorTurno;
+    private int turnosVeneno;
 
     private final List<Tecnica> tecnicas;
     private final Map<Tecnica, Integer> usosTecnicas;
@@ -158,8 +161,11 @@ public abstract class Combatiente {
     }
 
     public void reiniciarParaCombate() {
-        vida = getVidaMaxima();
+    	vida = getVidaMaxima();
         energia = getEnergiaMaxima();
+
+        // Los efectos duran solamente un combate
+        reiniciarEfectosTemporales();
     }
     
     public void activarDefensa() {
@@ -172,6 +178,8 @@ public abstract class Combatiente {
 
     public void reiniciarEfectosTemporales() {
         defensaActiva = false;
+        danioVenenoPorTurno = 0;
+        turnosVeneno = 0;
     }
 
     // Cálculo del daño
@@ -325,6 +333,24 @@ public abstract class Combatiente {
 
     public List<Equipamiento> getEquipamientos() {
         return List.copyOf(equipamientos);
+    }
+    
+    //Poison
+    
+    public void aplicarVeneno(int danio, int turnos) {
+        if (danio < 0 || turnos < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        danioVenenoPorTurno = danio;
+        turnosVeneno = turnos;
+    }
+
+    public void aplicarEfectosInicioTurno() {
+        if (turnosVeneno > 0 && estaEnPie()) {
+            recibirDanio(danioVenenoPorTurno);
+            turnosVeneno--;
+        }
     }
 
     // Igualdad por identificador

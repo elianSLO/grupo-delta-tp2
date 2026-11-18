@@ -11,6 +11,7 @@ import com.inmortales.modelo.EfectoDanio;
 import com.inmortales.modelo.EfectoDanioYEnergia;
 import com.inmortales.modelo.EfectoDefensivo;
 import com.inmortales.modelo.EfectoRecuperacion;
+import com.inmortales.modelo.EfectoVeneno;
 import com.inmortales.modelo.Escuela;
 import com.inmortales.modelo.Tecnica;
 import com.inmortales.modelo.equipamiento.Arma;
@@ -27,6 +28,13 @@ public class ConfiguracionJuego {
     public ConfiguracionJuego() {
 
         // Técnicas
+    	
+    	Tecnica veneno = new Tecnica(
+    		    "Veneno de la Serpiente Celestial",
+    		    8,
+    		    new EfectoVeneno(5, 3)
+    	);
+    	
         Tecnica corteCelestial = new Tecnica(
             "Corte Celestial", 8, new EfectoDanio(20)
         );
@@ -65,7 +73,7 @@ public class ConfiguracionJuego {
 
         Escuela escuelaVacio = new Escuela(
             "Palacio del Vacío",
-            List.of(dominioVacio, meditacion),
+            List.of(dominioVacio, meditacion, veneno),
             List.of(anillo)
         );
 
