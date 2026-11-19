@@ -17,6 +17,7 @@ import com.inmortales.modelo.MonjeCuerpoCelestial;
 import com.inmortales.modelo.Pareja;
 import com.inmortales.modelo.EfectoDanio;
 import com.inmortales.modelo.EfectoRecuperacion;
+import com.inmortales.modelo.EfectoVeneno;
 import com.inmortales.modelo.Tecnica;
 
 class CombateTest {
@@ -603,5 +604,61 @@ class CombateTest {
             assertNotEquals(Integer.valueOf(3), accion.getIdObjetivo(),
                 "Un caído no debe ser elegido como objetivo");
         }
+    }
+
+    // Bonus (efecto temporal): durante el combate, el veneno daña al
+    // comienzo de cada turno del afectado y cada daño se comunica
+    // como acontecimiento.
+    @Test
+    void elVenenoPublicaUnEventoConElDanioDeCadaTurno() {
+
+        Tecnica veneno = new Tecnica(
+            "Veneno de la Serpiente Celestial", 0, new EfectoVeneno(5, 3)
+        );
+
+        Combatiente atacante = new CultivadorEspada(1, "Atacante");
+        Combatiente companero = new CultivadorEspada(2, "Compañero");
+        Combatiente rival1 = new CultivadorEspada(3, "Rival 1");
+        Combatiente rival2 = new CultivadorEspada(4, "Rival 2");
+
+        atacante.aprenderTecnica(veneno);
+
+        Pareja pareja1 = new Pareja(1, atacante, companero);
+        Pareja pareja2 = new Pareja(2, rival1, rival2);
+
+        // El atacante envenena una sola vez a Rival 1; después,
+        // todos hacen ataques básicos.
+        EstrategiaCombate estrategia = (combatiente, pareja, registro) -> {
+            if (combatiente.equals(atacante)
+                    && !registro.utilizoTecnica(atacante, veneno)) {
+                return AccionCombate.usarTecnica(veneno);
+            }
+            return AccionCombate.ataqueBasico();
+        };
+
+        GestorEventos gestor = new GestorEventos();
+        List<Evento> eventos = new java.util.ArrayList<>();
+        gestor.suscribir(eventos::add);
+
+        Combate combate = new Combate(
+            pareja1, pareja2, estrategia,
+            new ConfiguracionCombate(3, 0), gestor, 1
+        );
+
+        // Act
+        combate.ejecutar();
+
+        List<Evento> danioVeneno = eventos.stream()
+            .filter(evento -> evento.getTipo() == TipoEvento.EFECTO_TEMPORAL)
+            .toList();
+
+        // Assert: un evento por cada uno de los 3 turnos de Rival 1
+        assertEquals(3, danioVeneno.size());
+
+        for (Evento evento : danioVeneno) {
+            assertEquals(Integer.valueOf(3), evento.getIdCombatiente());
+        }
+
+        assertEquals(0, rival1.getTurnosVeneno());
     }
 }

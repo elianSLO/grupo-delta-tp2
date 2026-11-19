@@ -173,7 +173,25 @@ public class Combate {
 
     private void ejecutarTurno(Combatiente combatiente) {
 
-        combatiente.aplicarEfectosInicioTurno();
+        int danioVeneno = combatiente.aplicarEfectosInicioTurno();
+
+        if (danioVeneno > 0) {
+            int turnosRestantes = combatiente.getTurnosVeneno();
+
+            publicarEvento(
+                TipoEvento.EFECTO_TEMPORAL,
+                combatiente.getNombre() + " sufre " + danioVeneno
+                    + " puntos de daño por veneno"
+                    + (turnosRestantes > 0
+                        ? (turnosRestantes == 1
+                            ? " (le queda 1 turno)."
+                            : " (le quedan " + turnosRestantes + " turnos).")
+                        : " y el veneno se termina."),
+                combatiente.getId(),
+                null,
+                null, null, null, null, null
+            );
+        }
 
         if (!combatiente.estaEnPie()) {
             verificarEliminacion(combatiente);
@@ -260,6 +278,7 @@ public class Combate {
 
         int vidaAnterior = objetivo.getVida();
         int energiaAnterior = objetivo.getEnergia();
+        int venenoAnterior = objetivo.getTurnosVeneno();
 
         tecnica.ejecutar(ejecutor, objetivo);
 
@@ -267,7 +286,8 @@ public class Combate {
             TipoEvento.USO_TECNICA,
             ejecutor.getNombre() + " utiliza " + tecnica.getNombre()
                 + " sobre " + objetivo.getNombre()
-                + describirEfecto(objetivo, vidaAnterior, energiaAnterior)
+                + describirEfecto(objetivo, vidaAnterior, energiaAnterior,
+                    venenoAnterior)
                 + ".",
             ejecutor.getId(),
             objetivo.getId(),
@@ -280,7 +300,8 @@ public class Combate {
     private String describirEfecto(
             Combatiente objetivo,
             int vidaAnterior,
-            int energiaAnterior) {
+            int energiaAnterior,
+            int venenoAnterior) {
 
         int diferenciaVida = objetivo.getVida() - vidaAnterior;
         int energiaQuitada = energiaAnterior - objetivo.getEnergia();
@@ -301,6 +322,12 @@ public class Combate {
             detalle.append(" y le quita ")
                 .append(energiaQuitada)
                 .append(" puntos de energía");
+        }
+
+        if (objetivo.getTurnosVeneno() > venenoAnterior) {
+            detalle.append(" y lo envenena por ")
+                .append(objetivo.getTurnosVeneno())
+                .append(" turnos");
         }
 
         if (detalle.length() == 0 && objetivo.tieneDefensaActiva()) {
