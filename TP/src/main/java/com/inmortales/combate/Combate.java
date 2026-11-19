@@ -1,5 +1,6 @@
 package com.inmortales.combate;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +10,7 @@ import com.inmortales.combate.estrategia.EstrategiaCombate;
 import com.inmortales.eventos.Evento;
 import com.inmortales.eventos.GestorEventos;
 import com.inmortales.eventos.TipoEvento;
+import com.inmortales.eventos.VidaIntegrante;
 import com.inmortales.modelo.Combatiente;
 import com.inmortales.modelo.Pareja;
 import com.inmortales.modelo.Tecnica;
@@ -101,7 +103,8 @@ public class Combate {
                 pareja1.getVidaTotal(),
                 pareja2.getId(),
                 pareja2.getVidaTotal(),
-                ganadora.getId()
+                ganadora.getId(),
+                registrarVidasIntegrantes()
             );
 
             return ganadora;
@@ -119,6 +122,23 @@ public class Combate {
             Integer vidaPareja2,
             Integer idParejaGanadora) {
 
+        publicarEvento(tipo, descripcion, idCombatiente, idObjetivo,
+            idPareja1, vidaPareja1, idPareja2, vidaPareja2,
+            idParejaGanadora, List.of());
+    }
+
+    private void publicarEvento(
+            TipoEvento tipo,
+            String descripcion,
+            Integer idCombatiente,
+            Integer idObjetivo,
+            Integer idPareja1,
+            Integer vidaPareja1,
+            Integer idPareja2,
+            Integer vidaPareja2,
+            Integer idParejaGanadora,
+            List<VidaIntegrante> vidasIntegrantes) {
+
         Evento evento = new Evento(
             tipo,
             descripcion,
@@ -130,10 +150,30 @@ public class Combate {
             vidaPareja1,
             idPareja2,
             vidaPareja2,
-            idParejaGanadora
+            idParejaGanadora,
+            vidasIntegrantes
         );
 
         gestorEventos.publicar(evento);
+    }
+
+    // Foto de la vida de cada integrante al terminar el combate
+    private List<VidaIntegrante> registrarVidasIntegrantes() {
+
+        List<VidaIntegrante> vidas = new ArrayList<>();
+
+        for (Pareja pareja : List.of(pareja1, pareja2)) {
+            for (Combatiente combatiente : pareja.getCombatientes()) {
+                vidas.add(new VidaIntegrante(
+                    pareja.getId(),
+                    combatiente.getId(),
+                    combatiente.getNombre(),
+                    combatiente.getVida()
+                ));
+            }
+        }
+
+        return vidas;
     }
 
     private void prepararCombatientes() {

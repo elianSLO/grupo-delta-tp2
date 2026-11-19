@@ -197,4 +197,53 @@ class CronistaSectaTest {
 
         assertEquals(1, cronista.getHistorial().size());
     }
+
+    // Tabla de posiciones: además de la vida final, guarda la vida de
+    // cada integrante para mostrar cómo se llegó a la suma.
+    @Test
+    void guardaLaVidaDeCadaIntegranteDeLaPareja() {
+        CronistaSecta cronista = new CronistaSecta();
+
+        Evento finCombate = new Evento(
+            TipoEvento.FIN_COMBATE,
+            "Fin del combate.",
+            1, 5,
+            null, null,
+            1, 60,
+            2, 40,
+            1,
+            List.of(
+                new VidaIntegrante(1, 1, "Aurelio", 60),
+                new VidaIntegrante(1, 2, "Nébula", 0),
+                new VidaIntegrante(2, 3, "Kael", 25),
+                new VidaIntegrante(2, 4, "Darian", 15)
+            )
+        );
+
+        cronista.actualizar(finCombate);
+
+        ResultadoPareja pareja1 = cronista.obtenerPosiciones().get(0);
+
+        assertEquals(1, pareja1.getIdPareja());
+        assertEquals(60, pareja1.getVidaFinal());
+        assertEquals(2, pareja1.getIntegrantes().size());
+        assertEquals("Aurelio", pareja1.getIntegrantes().get(0).nombre());
+        assertEquals(60, pareja1.getIntegrantes().get(0).vida());
+        assertEquals("Nébula", pareja1.getIntegrantes().get(1).nombre());
+        assertEquals(0, pareja1.getIntegrantes().get(1).vida());
+    }
+
+    // La vida de los integrantes tiene que sumar la vida final de la pareja.
+    @Test
+    void rechazaIntegrantesQueNoSumanLaVidaFinal() {
+        List<VidaIntegrante> integrantes = List.of(
+            new VidaIntegrante(1, 1, "Aurelio", 50),
+            new VidaIntegrante(1, 2, "Nébula", 0)
+        );
+
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> new ResultadoPareja(1, 1, 60, integrantes)
+        );
+    }
 }

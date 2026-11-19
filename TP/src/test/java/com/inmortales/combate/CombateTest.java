@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.inmortales.eventos.Evento;
 import com.inmortales.eventos.TipoEvento;
+import com.inmortales.eventos.VidaIntegrante;
 import com.inmortales.combate.estrategia.AccionCombate;
 import com.inmortales.combate.estrategia.EstrategiaCombate;
 import com.inmortales.eventos.GestorEventos;
@@ -660,5 +661,53 @@ class CombateTest {
         }
 
         assertEquals(0, rival1.getTurnosVeneno());
+    }
+
+    // Al terminar el combate, el evento guarda la vida de cada integrante,
+    // y en cada pareja esas vidas suman su vida total.
+    @Test
+    void elFinDelCombateGuardaLaVidaDeCadaIntegrante() {
+        Pareja pareja1 = crearPareja(1, 1);
+        Pareja pareja2 = crearPareja(2, 3);
+
+        GestorEventos gestor = new GestorEventos();
+        List<Evento> eventos = new java.util.ArrayList<>();
+        gestor.suscribir(eventos::add);
+
+        Combate combate = new Combate(
+            pareja1, pareja2, crearEstrategiaBasica(),
+            new ConfiguracionCombate(3, 0), gestor, 1
+        );
+
+        // Act
+        combate.ejecutar();
+
+        Evento fin = eventos.stream()
+            .filter(evento -> evento.getTipo() == TipoEvento.FIN_COMBATE)
+            .findFirst()
+            .orElseThrow();
+
+        // Assert: un registro por cada uno de los 4 combatientes
+        assertEquals(4, fin.getVidasIntegrantes().size());
+
+        for (Pareja pareja : List.of(pareja1, pareja2)) {
+            int suma = 0;
+
+            for (Combatiente combatiente : pareja.getCombatientes()) {
+                VidaIntegrante vida = fin.getVidasIntegrantes().stream()
+                    .filter(v -> v.idCombatiente() == combatiente.getId())
+                    .findFirst()
+                    .orElseThrow();
+
+                assertEquals(pareja.getId(), vida.idPareja());
+                assertEquals(combatiente.getVida(), vida.vida());
+                suma += vida.vida();
+            }
+
+            assertEquals(pareja.getVidaTotal(), suma);
+        }
+
+        assertEquals(pareja1.getVidaTotal(), fin.getVidaPareja1());
+        assertEquals(pareja2.getVidaTotal(), fin.getVidaPareja2());
     }
 }

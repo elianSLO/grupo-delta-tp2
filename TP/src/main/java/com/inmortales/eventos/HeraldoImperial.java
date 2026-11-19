@@ -35,6 +35,7 @@ public class HeraldoImperial implements ObservadorEventos {
                 puesto + "° puesto - Pareja " + resultado.getIdPareja()
                 + " | Última ronda: " + resultado.getUltimaRonda()
                 + " | Vida final: " + resultado.getVidaFinal()
+                + detalleIntegrantes(resultado)
             );
 
             puesto++;
@@ -43,6 +44,20 @@ public class HeraldoImperial implements ObservadorEventos {
         System.out.println("=========================================");
     }
     
+    // Muestra cómo se llegó a la vida final: " (Goku 100 + Geralt 79)"
+    private String detalleIntegrantes(ResultadoPareja resultado) {
+
+        if (resultado.getIntegrantes().isEmpty()) {
+            return "";
+        }
+
+        List<String> partes = resultado.getIntegrantes().stream()
+            .map(v -> v.nombre() + " " + v.vida())
+            .toList();
+
+        return " (" + String.join(" + ", partes) + ")";
+    }
+
     public void proclamarCampeona(Pareja campeona) {
         System.out.println("\n¡LA PAREJA CAMPEONA ES LA N° "
             + campeona.getId() + "!");
