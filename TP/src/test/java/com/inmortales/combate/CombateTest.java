@@ -528,4 +528,80 @@ class CombateTest {
         // Assert: los usos siguen agotados
         assertEquals(0, atacante.getUsosRestantes(tecnica));
     }
+    
+ // Regla (sección 6): al llegar a cero de vida, el combatiente queda
+    // fuera de combate: no actúa ni puede ser objetivo en ese combate.
+    @Test
+    void unCaidoNoActuaNiEsElegidoComoObjetivo() {
+
+        // Golpe que elimina de un solo uso
+        Tecnica golpeMortal = new Tecnica(
+            "Golpe Mortal", 0, new EfectoDanio(1000)
+        );
+
+        Combatiente atacante = new CultivadorEspada(1, "Atacante");
+        Combatiente companero = new CultivadorEspada(2, "Compañero");
+        Combatiente rival1 = new CultivadorEspada(3, "Rival 1");
+        Combatiente rival2 = new MonjeCuerpoCelestial(4, "Rival 2");
+
+        atacante.aprenderTecnica(golpeMortal);
+
+        Pareja pareja1 = new Pareja(1, atacante, companero);
+        Pareja pareja2 = new Pareja(2, rival1, rival2);
+
+        // El atacante usa el golpe una sola vez (elimina a Rival 1);
+        // después todos hacen ataques básicos.
+        EstrategiaCombate estrategia = (combatiente, pareja, registro) -> {
+            if (combatiente.equals(atacante)
+                    && !registro.utilizoTecnica(atacante, golpeMortal)) {
+                return AccionCombate.usarTecnica(golpeMortal);
+            }
+            return AccionCombate.ataqueBasico();
+        };
+
+        GestorEventos gestor = new GestorEventos();
+        List<Evento> eventos = new java.util.ArrayList<>();
+        gestor.suscribir(eventos::add);
+
+        Combate combate = new Combate(
+            pareja1, pareja2, estrategia,
+            new ConfiguracionCombate(3, 0), gestor, 1
+        );
+
+        // Act
+        combate.ejecutar();
+
+        // Buscamos el momento en que cae Rival 1 (id 3)
+        int indiceEliminacion = -1;
+        for (int i = 0; i < eventos.size(); i++) {
+            Evento evento = eventos.get(i);
+            if (evento.getTipo() == TipoEvento.COMBATIENTE_ELIMINADO
+                    && Integer.valueOf(3).equals(evento.getIdCombatiente())) {
+                indiceEliminacion = i;
+                break;
+            }
+        }
+
+        assertTrue(indiceEliminacion >= 0, "Rival 1 debería haber caído");
+        assertFalse(rival1.estaEnPie());
+
+        List<Evento> accionesPosteriores = eventos
+            .subList(indiceEliminacion + 1, eventos.size())
+            .stream()
+            .filter(evento -> evento.getTipo() == TipoEvento.ATAQUE_BASICO
+                || evento.getTipo() == TipoEvento.USO_TECNICA)
+            .toList();
+
+        // Hubo acciones después de la caída (la prueba no es vacía)
+        assertFalse(accionesPosteriores.isEmpty());
+
+        // Ninguna la hizo Rival 1, y nadie lo eligió como objetivo,
+        // aunque con 0 de vida sería "el rival con menos vida".
+        for (Evento accion : accionesPosteriores) {
+            assertNotEquals(Integer.valueOf(3), accion.getIdCombatiente(),
+                "Un caído no debe actuar");
+            assertNotEquals(Integer.valueOf(3), accion.getIdObjetivo(),
+                "Un caído no debe ser elegido como objetivo");
+        }
+    }
 }
