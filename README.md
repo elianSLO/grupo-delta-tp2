@@ -1,8 +1,7 @@
-# El Torneo de los Inmortales
-# grupo-delta-tp2
+# El Torneo de los Inmortales - Grupo Delta
 Trabajo Práctico N.º 2 de Paradigmas de Programación.
 
-> **Grupo Delta - 2.º cuatrimestre 2026**
+> **Comision: 5900 - 2.º cuatrimestre 2026**
 
 ## Integrantes
 
