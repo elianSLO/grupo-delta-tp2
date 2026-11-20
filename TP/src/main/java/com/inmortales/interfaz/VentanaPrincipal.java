@@ -17,7 +17,7 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal() {
 
         setTitle("Torneo de los Inmortales");
-        setSize(1000, 700);
+        setSize(1100, 760);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -25,7 +25,7 @@ public class VentanaPrincipal extends JFrame {
         contenedor = new JPanel(cardLayout);
         configuracion = new ConfiguracionJuego();
 
-        // Por ahora mostramos una pantalla inicial.
+        // Pantalla inicial.
         JPanel inicio = crearPanelInicio();
 
         contenedor.add(inicio, "INICIO");
@@ -37,21 +37,47 @@ public class VentanaPrincipal extends JFrame {
 
     private JPanel crearPanelInicio() {
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new java.awt.BorderLayout());
+        // Pantalla de bienvenida: fondo oscuro con el título centrado.
+        JPanel panel = new JPanel(new java.awt.GridBagLayout());
+        panel.setBackground(Estilo.PRINCIPAL);
 
         javax.swing.JLabel titulo = new javax.swing.JLabel(
-            "TORNEO DE LOS INMORTALES",
-            javax.swing.SwingConstants.CENTER
+            "EL TORNEO DE LOS INMORTALES"
         );
+        titulo.setFont(new java.awt.Font("Serif", java.awt.Font.BOLD, 44));
+        titulo.setForeground(java.awt.Color.WHITE);
 
-        titulo.setFont(
-            new java.awt.Font("Serif", java.awt.Font.BOLD, 32)
+        javax.swing.JLabel subtitulo = new javax.swing.JLabel(
+            "La elección de los Dos Santos Supremos"
         );
+        subtitulo.setFont(new java.awt.Font("Serif", java.awt.Font.ITALIC, 22));
+        subtitulo.setForeground(Estilo.DORADO);
 
-        javax.swing.JButton comenzar = new javax.swing.JButton(
-            "Comenzar torneo"
+        javax.swing.JLabel descripcion = new javax.swing.JLabel(
+            "Parejas de cultivadores se enfrentan en rondas eliminatorias"
+            + " hasta que solo una queda en pie."
         );
+        descripcion.setFont(Estilo.SUBTITULO);
+        descripcion.setForeground(new java.awt.Color(0xC9CCD6));
+
+        javax.swing.JButton comenzar = Estilo.boton("Comenzar torneo", true);
+        comenzar.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 18));
+        comenzar.setPreferredSize(new java.awt.Dimension(240, 48));
+
+        java.awt.GridBagConstraints c = new java.awt.GridBagConstraints();
+        c.gridx = 0;
+        c.insets = new java.awt.Insets(6, 0, 6, 0);
+
+        c.gridy = 0;
+        panel.add(titulo, c);
+        c.gridy = 1;
+        panel.add(subtitulo, c);
+        c.gridy = 2;
+        c.insets = new java.awt.Insets(18, 0, 36, 0);
+        panel.add(descripcion, c);
+        c.gridy = 3;
+        c.insets = new java.awt.Insets(6, 0, 6, 0);
+        panel.add(comenzar, c);
 
         comenzar.addActionListener(e -> {
 
@@ -86,15 +112,13 @@ public class VentanaPrincipal extends JFrame {
             cardLayout.show(contenedor, "INSCRIPCION");
         });
 
-        panel.add(titulo, java.awt.BorderLayout.CENTER);
-        panel.add(comenzar, java.awt.BorderLayout.SOUTH);
-
         return panel;
     }
 
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {
+            Estilo.aplicarAspectoGeneral();
             VentanaPrincipal ventana = new VentanaPrincipal();
             ventana.setVisible(true);
         });

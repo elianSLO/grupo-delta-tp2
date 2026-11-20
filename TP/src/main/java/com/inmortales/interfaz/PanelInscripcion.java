@@ -44,33 +44,54 @@ public class PanelInscripcion extends JPanel {
         this.alConfirmar = alConfirmar;
         this.formularios = new ArrayList<>();
 
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setLayout(new BorderLayout());
+        setBackground(Estilo.FONDO);
 
-        JLabel titulo = new JLabel("INSCRIPCIÓN DE PAREJAS");
-        titulo.setFont(new java.awt.Font("Serif", java.awt.Font.BOLD, 26));
+        JPanel arriba = new JPanel(new BorderLayout());
+        arriba.add(Estilo.encabezado(
+            "Inscripción de parejas",
+            "Cada combatiente necesita nombre, tipo y escuela."
+                + " La escuela define sus técnicas y su equipamiento."
+        ), BorderLayout.NORTH);
 
-        JPanel encabezado = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        encabezado.add(titulo);
-        encabezado.add(new JLabel("Cantidad de parejas:"));
+        // Barra de opciones: cantidad de parejas y ejemplo rápido
+        JPanel opciones = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        opciones.setBackground(Estilo.FONDO);
+        opciones.setBorder(BorderFactory.createEmptyBorder(6, 18, 0, 18));
+
+        JLabel etiquetaCantidad = new JLabel("Cantidad de parejas:");
+        etiquetaCantidad.setFont(Estilo.NEGRITA);
+        opciones.add(etiquetaCantidad);
 
         cantidadParejas = new JComboBox<>(new Integer[]{4, 8});
-        encabezado.add(cantidadParejas);
+        opciones.add(cantidadParejas);
 
-        add(encabezado, BorderLayout.NORTH);
+        JButton ejemplo = Estilo.boton("Cargar ejemplo", false);
+        ejemplo.setToolTipText("Completa las 4 parejas con los mismos combatientes del Main");
+        ejemplo.addActionListener(e -> cargarEjemplo());
+        opciones.add(ejemplo);
+
+        arriba.add(opciones, BorderLayout.SOUTH);
+        add(arriba, BorderLayout.NORTH);
 
         panelCombatientes = new JPanel();
         panelCombatientes.setLayout(
             new BoxLayout(panelCombatientes, BoxLayout.Y_AXIS)
         );
+        panelCombatientes.setBackground(Estilo.FONDO);
+        panelCombatientes.setBorder(BorderFactory.createEmptyBorder(6, 18, 6, 18));
 
         JScrollPane scroll = new JScrollPane(panelCombatientes);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
         add(scroll, BorderLayout.CENTER);
 
-        JButton confirmar = new JButton("Confirmar inscripciones");
+        JButton confirmar = Estilo.boton("Confirmar inscripciones", true);
         confirmar.addActionListener(e -> confirmarInscripciones());
 
-        JPanel pie = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel pie = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 12));
+        pie.setBackground(Estilo.FONDO);
+        pie.setBorder(BorderFactory.createEmptyBorder(0, 16, 6, 16));
         pie.add(confirmar);
         add(pie, BorderLayout.SOUTH);
 
@@ -87,18 +108,34 @@ public class PanelInscripcion extends JPanel {
 
         for (int i = 1; i <= cantidad; i++) {
 
-            JPanel panelPareja = new JPanel(new GridLayout(0, 1, 5, 5));
-            panelPareja.setBorder(BorderFactory.createTitledBorder(
-                "Pareja " + i
+            JPanel panelPareja = new JPanel(new GridLayout(0, 1, 6, 6));
+            panelPareja.setBackground(Estilo.TARJETA);
+            panelPareja.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Estilo.BORDE),
+                    "  Pareja " + i + "  ",
+                    javax.swing.border.TitledBorder.LEFT,
+                    javax.swing.border.TitledBorder.TOP,
+                    Estilo.NEGRITA,
+                    Estilo.PRINCIPAL
+                ),
+                BorderFactory.createEmptyBorder(4, 10, 10, 10)
             ));
+            panelPareja.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, 150));
 
             FormularioCombatiente primero = new FormularioCombatiente();
             FormularioCombatiente segundo = new FormularioCombatiente();
 
-            panelPareja.add(new JLabel("Primer combatiente"));
-            panelPareja.add(primero.panel);
+            JPanel titulos = new JPanel(new GridLayout(1, 3, 8, 8));
+            titulos.setOpaque(false);
+            for (String columna : new String[]{"Nombre", "Tipo", "Escuela"}) {
+                JLabel etiqueta = new JLabel(columna);
+                etiqueta.setForeground(Estilo.TEXTO_SUAVE);
+                titulos.add(etiqueta);
+            }
 
-            panelPareja.add(new JLabel("Segundo combatiente"));
+            panelPareja.add(titulos);
+            panelPareja.add(primero.panel);
             panelPareja.add(segundo.panel);
 
             formularios.add(primero);
@@ -109,6 +146,34 @@ public class PanelInscripcion extends JPanel {
 
         panelCombatientes.revalidate();
         panelCombatientes.repaint();
+    }
+
+    // Completa 4 parejas con los mismos combatientes que usa el Main,
+    // para no tener que escribirlos a mano en la demostración.
+    private void cargarEjemplo() {
+
+        cantidadParejas.setSelectedItem(4);
+
+        String espada = "Escuela de la Espada Celestial";
+        String monasterio = "Monasterio del Cuerpo Dorado";
+        String palacio = "Palacio del Vacío";
+
+        String[][] ejemplo = {
+            {"Kratos", "Espada", espada},
+            {"Loki", "Hechicero", palacio},
+            {"Goku", "Monje", monasterio},
+            {"Geralt de Rivia", "Espada", espada},
+            {"Doom Slayer", "Espada", espada},
+            {"Elsa", "Hechicero", palacio},
+            {"Gandalf", "Hechicero", palacio},
+            {"John Wick", "Espada", espada}
+        };
+
+        for (int i = 0; i < ejemplo.length && i < formularios.size(); i++) {
+            formularios.get(i).completar(
+                ejemplo[i][0], ejemplo[i][1], ejemplo[i][2]
+            );
+        }
     }
 
     private void confirmarInscripciones() {
@@ -167,7 +232,8 @@ public class PanelInscripcion extends JPanel {
 
         private FormularioCombatiente() {
 
-            panel = new JPanel(new GridLayout(1, 3, 5, 5));
+            panel = new JPanel(new GridLayout(1, 3, 8, 8));
+            panel.setOpaque(false);
 
             nombre = new JTextField();
             tipo = new JComboBox<>(new String[]{
@@ -185,6 +251,12 @@ public class PanelInscripcion extends JPanel {
             nombre.setToolTipText("Nombre del combatiente");
             tipo.setToolTipText("Tipo de cultivador");
             escuela.setToolTipText("Escuela");
+        }
+
+        private void completar(String nombreEjemplo, String tipoEjemplo, String escuelaEjemplo) {
+            nombre.setText(nombreEjemplo);
+            tipo.setSelectedItem(tipoEjemplo);
+            escuela.setSelectedItem(escuelaEjemplo);
         }
 
         private Combatiente crearCombatiente() {

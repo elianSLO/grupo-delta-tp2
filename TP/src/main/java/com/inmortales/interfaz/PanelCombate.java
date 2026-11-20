@@ -2,7 +2,6 @@ package com.inmortales.interfaz;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
@@ -11,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JEditorPane;
 import javax.swing.SwingWorker;
 
 import com.inmortales.modelo.Pareja;
@@ -22,7 +21,7 @@ public class PanelCombate extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private final SesionTorneo sesion;
-    private final JTextArea areaEventos;
+    private final JEditorPane areaEventos;
     private final JLabel etiquetaEstado;
 
     private final JButton botonAnterior;
@@ -48,40 +47,44 @@ public class PanelCombate extends JPanel {
         this.torneoFinalizado = false;
         this.indiceCombateMostrado = -1;
 
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setLayout(new BorderLayout());
+        setBackground(Estilo.FONDO);
 
         // Encabezado
-        JPanel encabezado = new JPanel(new BorderLayout());
+        add(Estilo.encabezado(
+            "Desarrollo del torneo",
+            "Cada combate se juega al apretar el botón; con Anterior y"
+                + " Siguiente se revisan los ya jugados."
+        ), BorderLayout.NORTH);
 
-        JLabel titulo = new JLabel("DESARROLLO DEL TORNEO");
-        titulo.setFont(new Font("Serif", Font.BOLD, 26));
+        JPanel cuerpo = new JPanel(new BorderLayout(0, 10));
+        cuerpo.setBackground(Estilo.FONDO);
+        cuerpo.setBorder(BorderFactory.createEmptyBorder(16, 24, 8, 24));
 
         etiquetaEstado = new JLabel("Preparado para comenzar el torneo");
-        etiquetaEstado.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        etiquetaEstado.setFont(Estilo.NEGRITA);
+        etiquetaEstado.setForeground(Estilo.PRINCIPAL);
+        cuerpo.add(etiquetaEstado, BorderLayout.NORTH);
 
-        encabezado.add(titulo, BorderLayout.NORTH);
-        encabezado.add(etiquetaEstado, BorderLayout.SOUTH);
-
-        add(encabezado, BorderLayout.NORTH);
-
-        // Área de eventos
-        areaEventos = new JTextArea();
+        // Área de eventos (HTML con colores por tipo de acontecimiento)
+        areaEventos = new JEditorPane("text/html", "");
         areaEventos.setEditable(false);
-        areaEventos.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        areaEventos.setLineWrap(true);
-        areaEventos.setWrapStyleWord(true);
+        areaEventos.setBackground(Estilo.TARJETA);
 
-        add(new JScrollPane(areaEventos), BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(areaEventos);
+        scroll.setBorder(BorderFactory.createLineBorder(Estilo.BORDE));
+        cuerpo.add(scroll, BorderLayout.CENTER);
+
+        add(cuerpo, BorderLayout.CENTER);
 
         // Observador
         observador = new ObservadorInterfaz(areaEventos);
         sesion.getGestorEventos().suscribir(observador);
 
         // Botones de navegación
-        botonAnterior = new JButton("Anterior");
-        botonSiguiente = new JButton("Iniciar torneo");
-        botonResultados = new JButton("Ver resultados");
+        botonAnterior = Estilo.boton("< Anterior", false);
+        botonSiguiente = Estilo.boton("Iniciar torneo", true);
+        botonResultados = Estilo.boton("Ver resultados", false);
 
         botonAnterior.addActionListener(e -> mostrarAnterior());
 
@@ -91,7 +94,9 @@ public class PanelCombate extends JPanel {
             alFinalizar.accept(campeona);
         });
 
-        JPanel pie = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel pie = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 12));
+        pie.setBackground(Estilo.FONDO);
+        pie.setBorder(BorderFactory.createEmptyBorder(0, 16, 6, 16));
 
         pie.add(botonAnterior);
         pie.add(botonSiguiente);
@@ -132,8 +137,8 @@ public class PanelCombate extends JPanel {
         observador.mostrarCombate(indiceCombateMostrado);
 
         etiquetaEstado.setText(
-            "Combate " + (indiceCombateMostrado + 1)
-            + " de " + observador.getCantidadCombates()
+            "Mostrando el combate " + (indiceCombateMostrado + 1)
+            + " de " + observador.getCantidadCombates() + " jugados"
         );
 
         actualizarBotones();
@@ -222,13 +227,13 @@ public class PanelCombate extends JPanel {
         );
 
         if (hayCombatePosterior) {
-            botonSiguiente.setText("Siguiente");
+            botonSiguiente.setText("Siguiente >");
         } else if (torneoFinalizado) {
             botonSiguiente.setText("Torneo finalizado");
         } else if (cantidad == 0) {
             botonSiguiente.setText("Iniciar torneo");
         } else {
-            botonSiguiente.setText("Siguiente combate");
+            botonSiguiente.setText("Jugar siguiente combate >");
         }
 
         botonResultados.setEnabled(torneoFinalizado);

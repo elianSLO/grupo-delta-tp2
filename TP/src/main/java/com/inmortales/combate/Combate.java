@@ -77,7 +77,10 @@ public class Combate {
         	    pareja1.getVidaTotal(),
         	    pareja2.getId(),
         	    pareja2.getVidaTotal(),
-        	    null
+        	    null,
+        	    // Quiénes pelean, para que los observadores puedan
+        	    // mostrar los nombres de cada pareja.
+        	    registrarVidasIntegrantes()
         	);
 
         while (!hayGanadora()
