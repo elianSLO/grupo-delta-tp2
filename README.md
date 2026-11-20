@@ -1,217 +1,380 @@
+# El Torneo de los Inmortales
 # grupo-delta-tp2
-Repositorio para la resolución del TP2 de la materia Paradigmas de Programación de la UNLAM.
+Trabajo Práctico N.º 2 de Paradigmas de Programación.
 
-consigna:
+> **Grupo Delta - 2.º cuatrimestre 2026**
 
-Trabajo Práctico N° 2
+## Integrantes
 
-El presente trabajo práctico tiene como objetivo aplicar los conceptos, principios y características del paradigma de la programación orientada a objetos (Clases, objetos, métodos, interfaz, herencia, polimorfismo, colecciones, etc).
+- Pablo Alfredo Battiston
+- Elián Ariel Módica
+- Gustavo Gabriel Ayala Bustos
+- Keila Mariel Almada
+- Maria Celeste Torres Moran
+- Lucas Leonel Gutierrez
 
-Fecha de entrega: 17 de Noviembre / 20 de Noviembre de 2026 (dependiendo la comisión)
+# Consigna
 
-Objetivo
-Implementar los conceptos abordados del paradigma de la Programación orientada a objetos, como solución a un problema real, partiendo del análisis de la problemática, el diseño de la solución (Diagrama de Clases) y posteriormente la construcción del producto final (Software).
+Repositorio para la resolución del Trabajo Práctico N.º 2 de la materia **Paradigmas de Programación** de la Universidad Nacional de La Matanza.
 
-Consigna
-Temática
-El Torneo de los Inmortales: la elección de los Dos Santos Supremos
+## Fecha de entrega
 
-Objetivos del trabajo
-Modelar un sistema de combate por parejas entre cultivadores de distintas escuelas.
-Implementar técnicas de combate y equipamiento que modifican las capacidades de los combatientes.
-Gestionar las parejas, los cruces y las rondas de un torneo eliminatorio, utilizando distintos tipos de colección y aplicando los patrones de diseño que correspondan.
-Usar herencia y polimorfismo para permitir la diversidad de combatientes (Cultivador de la Espada, Monje del Cuerpo Celestial, Hechicero del Vacío) y que cada escuela los prepare según su filosofía.
-Descripción General
-Parejas de combatientes se enfrentan en rondas eliminatorias hasta que queda una sola en pie; sus integrantes son proclamados los Dos Santos Supremos. Cada combatiente pertenece a una escuela de cultivación, que define su preparación inicial. Se espera que el sistema esté diseñado de manera flexible para que se puedan agregar nuevos tipos de combatientes, técnicas, escuelas y equipamientos fácilmente. Los términos del enunciado están definidos en el glosario del anexo, al final del documento
+17 o 20 de noviembre de 2026, según la comisión.
 
+## Objetivo general
 
-1. Combatientes
-Combatiente (abstracta): identificador único e inmutable, nombre, vida y energía (actuales y máximas), equipamiento y técnicas disponibles. Dos combatientes son el mismo si tienen el mismo identificador, sin importar el nombre.
+Aplicar los conceptos, principios y características de la programación orientada a objetos —clases, objetos, métodos, interfaces, herencia, polimorfismo y colecciones— para resolver un problema real.
 
-Tipos iniciales:
+El trabajo debe incluir el análisis de la problemática, el diseño de la solución mediante un diagrama de clases y la construcción del software.
 
-Cultivador de la Espada: potencia el daño que provoca.
-Monje del Cuerpo Celestial: reduce el daño que recibe.
-Hechicero del Vacío: gasta menos energía al ejecutar técnicas.
-La diferencia entre tipos debe surgir del polimorfismo, no de preguntar el tipo con if o instanceof: una misma técnica provoca distinto daño según quién la ejecuta, sin que la técnica conozca el tipo del combatiente. Se deben poder agregar tipos nuevos sin modificar el torneo ni las técnicas existentes.
+## Temática
 
-2. Técnicas
-Una técnica es únicamente su definición: nombre, costo de energía y efecto. Los usos se registran en cada combatiente, porque una misma técnica puede estar en varios. Agregar una técnica nueva no debe modificar las existentes. Ejemplos:
+**El Torneo de los Inmortales: la elección de los Dos Santos Supremos**
 
-Corte de los Mil Amaneceres: daña al adversario.
-Muro del Cuerpo Dorado: reduce el daño que recibe el ejecutor durante el resto del combate.
-Dominio de la Nada: daña al adversario y le quita energía.
-Rugido de la Bestia Primordial: ataque poderoso.
-Meditación del Inmortal: recupera vida.
-Los valores concretos (daño, costo) los define el grupo y deben quedar documentados y justificados.
+## Objetivos del trabajo
 
-3. Escuelas y creación de combatientes
-Las escuelas preparan combatientes de cualquier tipo según su filosofía, asignándoles el equipamiento y las técnicas iniciales:
+- Modelar un sistema de combate por parejas entre cultivadores de distintas escuelas.
+- Implementar técnicas y equipamientos que modifiquen las capacidades de los combatientes.
+- Gestionar parejas, cruces y rondas de un torneo eliminatorio.
+- Utilizar colecciones apropiadas y patrones de diseño.
+- Aplicar herencia y polimorfismo para representar distintos tipos de combatientes.
+- Permitir que cada escuela prepare a sus combatientes según su filosofía.
 
-Escuela de la Espada Celestial: ataques físicos y armas.
-Palacio del Vacío: técnicas especiales y dominio de la energía.
-Monasterio del Cuerpo Dorado: resistencia, defensa y recuperación.
-Una escuela es un objeto con nombre, técnicas y equipamiento iniciales, como muestra el ejemplo de main. Agregar una escuela es crear otro objeto así, sin escribir código nuevo.
+## Descripción general
 
-La creación de combatientes está centralizada: pedir un Hechicero del Vacío preparado por el Palacio del Vacío no requiere conocer su clase concreta, sus atributos iniciales ni cómo se arma su preparación.
+Las parejas de combatientes se enfrentan en rondas eliminatorias hasta que queda una sola pareja. Sus integrantes son proclamados los **Dos Santos Supremos**.
 
-4. Equipamiento
-Modifica las capacidades del combatiente mientras lo lleva. Ejemplos: Espada celestial (más daño), Armadura dorada (menos daño recibido), Anillo espiritual (más energía máxima), Sello del Fénix (más vida máxima).
+Cada combatiente pertenece a una escuela de cultivación que determina su preparación inicial. El sistema debe ser flexible para incorporar nuevos combatientes, técnicas, escuelas y equipamientos.
 
-Un combatiente puede llevar hasta tres equipamientos, sin dos de la misma categoría (arma, armadura, anillo, sello). Los efectos se acumulan.
-Se puede equipar y quitar antes del torneo y entre combates. Se debe manejar correctamente cuando un cambio intenta romper una regla.
-Equipar un objeto que aumenta un máximo no aumenta el valor actual. Al quitarlo, el valor actual se recorta al nuevo máximo si lo supera.
-El combatiente conoce los objetos que lleva y puede consultarlos.
-5. Parejas y torneo
-Cada pareja tiene identificador único, asignado al crearse; el de los combatientes lo asigna el creador, en orden de creación. Un combatiente no puede inscribirse dos veces ni una pareja registrarse dos veces; el intento debe rechazarse con una excepción.
-El torneo se debe jugar únicamente con 4 u 8 parejas.
-Los cruces de la primera ronda se arman por orden de inscripción (primera contra segunda, tercera contra cuarta, etc.). En las siguientes, por el orden de los cruces de la ronda anterior.
+## 1. Combatientes
+
+`Combatiente` debe ser una clase abstracta con:
+
+- identificador único e inmutable;
+- nombre;
+- vida actual y máxima;
+- energía actual y máxima;
+- equipamiento;
+- técnicas disponibles.
+
+Dos combatientes son iguales si tienen el mismo identificador, sin importar su nombre.
+
+### Tipos iniciales
+
+- **Cultivador de la Espada:** potencia el daño provocado.
+- **Monje del Cuerpo Celestial:** reduce el daño recibido.
+- **Hechicero del Vacío:** gasta menos energía al ejecutar técnicas.
+
+Las diferencias deben surgir mediante polimorfismo. No se debe consultar el tipo concreto mediante `if` o `instanceof`. Una misma técnica debe producir un daño diferente según quién la ejecute, sin conocer la técnica el tipo del combatiente.
+
+Debe ser posible agregar nuevos tipos sin modificar el torneo ni las técnicas existentes.
+
+## 2. Técnicas
+
+Una técnica es únicamente una definición compuesta por:
+
+- nombre;
+- costo de energía;
+- efecto.
+
+Los usos se registran en cada combatiente, porque una misma técnica puede pertenecer a varios combatientes.
+
+Ejemplos:
+
+- **Corte de los Mil Amaneceres:** daña al adversario.
+- **Muro del Cuerpo Dorado:** reduce el daño recibido durante el combate.
+- **Dominio de la Nada:** daña al adversario y le quita energía.
+- **Rugido de la Bestia Primordial:** ataque poderoso.
+- **Meditación del Inmortal:** recupera vida.
+
+El grupo debe definir, documentar y justificar los valores de daño y costo.
+
+## 3. Escuelas y creación de combatientes
+
+Las escuelas preparan combatientes de cualquier tipo asignándoles técnicas y equipamiento iniciales.
+
+- **Escuela de la Espada Celestial:** ataques físicos y armas.
+- **Palacio del Vacío:** técnicas especiales y dominio de la energía.
+- **Monasterio del Cuerpo Dorado:** resistencia, defensa y recuperación.
+
+Una escuela debe ser un objeto que contenga nombre, técnicas iniciales y equipamientos iniciales. Agregar una escuela debe consistir en crear otro objeto, sin escribir código nuevo.
+
+La creación debe estar centralizada: crear un Hechicero del Vacío preparado por el Palacio del Vacío no debe requerir conocer su clase concreta, sus atributos iniciales ni el proceso de preparación.
+
+## 4. Equipamiento
+
+El equipamiento modifica las capacidades del combatiente mientras lo lleva.
+
+Ejemplos:
+
+- **Espada Celestial:** aumenta el daño.
+- **Armadura Dorada:** reduce el daño recibido.
+- **Anillo Espiritual:** aumenta la energía máxima.
+- **Sello del Fénix:** aumenta la vida máxima.
+
+Reglas:
+
+- cada combatiente puede llevar hasta tres equipamientos;
+- no puede llevar dos objetos de la misma categoría: arma, armadura, anillo o sello;
+- los efectos se acumulan;
+- se puede equipar y quitar antes del torneo y entre combates;
+- un intento inválido debe rechazarse sin modificar el estado;
+- aumentar un máximo no aumenta el valor actual;
+- al quitar un equipamiento, el valor actual se recorta si supera el nuevo máximo;
+- el combatiente debe poder consultar los objetos que lleva.
+
+## 5. Parejas y torneo
+
+Cada pareja tiene un identificador único asignado al crearse. El creador asigna los identificadores de los combatientes en orden de creación.
+
+No se permite:
+
+- inscribir un combatiente dos veces;
+- registrar una pareja dos veces;
+- iniciar el torneo con una cantidad distinta de cuatro u ocho parejas.
+
+Los cruces se forman de la siguiente manera:
+
+- primera ronda: por orden de inscripción;
+- rondas siguientes: por el orden de los cruces de la ronda anterior.
+
 Una pareja pierde cuando sus dos integrantes quedan fuera de combate. El torneo termina cuando queda una sola pareja.
-Las colecciones se eligen según la necesidad (conservar el orden de rondas y cruces, evitar duplicados, registrar cuántas veces cada combatiente usó cada técnica, ordenar la tabla de posiciones).
-6. Reglas del combate
-Asaltos y turnos
 
-El combate se desarrolla en asaltos. En cada asalto, cada pareja juega su turno completo: cada integrante en pie realiza una acción. Empieza la pareja de menor identificador.
-Dentro de la pareja actúa primero el de menor identificador. Si en cualquier momento una pareja queda sin integrantes en pie, el combate termina.
-Acción
+Las colecciones deben seleccionarse según la necesidad: conservar orden, evitar duplicados, registrar usos de técnicas y ordenar la tabla de posiciones.
 
-La acción es un ataque básico o una técnica. El ataque básico no cuesta energía, no tiene límite de usos y no cuenta para la regla del compañero. La técnica requiere energía suficiente y usos restantes.
-Criterio por defecto, en este orden: una técnica de recuperación si le falta vida; una defensiva si no tiene una activa; la técnica ofensiva con más usos restantes. Si ninguna es posible (por energía, usos o regla del compañero), se realiza un ataque básico. En empate, la primera en el orden de la escuela. El grupo puede definir otro criterio, siempre que sea determinista y esté documentado.
-Objetivo
+## 6. Reglas del combate
 
-Para ataques y técnicas ofensivas: el rival en pie con menos vida actual; en empate, el de menor identificador. Las técnicas defensivas y de recuperación se aplican al ejecutor.
-Vida y energía
+### Asaltos y turnos
 
-Al llegar a cero de vida, el combatiente queda fuera de combate: no actúa ni puede ser objetivo en ese combate.
-Al comenzar cada asalto, cada combatiente en pie recupera una cantidad fija de energía, que define el grupo, sin superar su máximo.
-Al comenzar cada combate, todos los integrantes (incluidos los caídos en combates anteriores) recuperan vida y energía al máximo.
-Los valores iniciales los define el grupo; por ejemplo, 100 puntos de vida y 40 de energía.
-Técnicas
+El combate se desarrolla en asaltos. En cada asalto, cada pareja juega su turno completo y cada integrante en pie realiza una acción.
 
-Regla del compañero: cuando un integrante usa una técnica en un combate, su compañero no puede usarla mientras el primero conserve usos de ella y siga en pie; si los agota o queda fuera de combate, el compañero puede usarla. La restricción termina con el combate: en el siguiente, cualquiera de los dos puede volver a usarla. La pareja puede llevar ese registro.
-Cada combatiente puede usar cada técnica cinco veces en todo el torneo; el registro no se reinicia entre combates. Sin usos no se puede ejecutar aunque haya energía.
-Duración
+- comienza la pareja de menor identificador;
+- dentro de la pareja actúa primero el combatiente de menor identificador;
+- si una pareja queda sin integrantes en pie, el combate termina inmediatamente.
 
-El grupo debe fijar un límite de asaltos por combate. Al alcanzarlo gana la pareja con más vida total (la suma de la vida actual de sus integrantes; un caído suma cero); en empate, la de menor identificador.
-Reproducibilidad
+### Acciones
 
-El combate es determinista: ante el mismo estado inicial produce el mismo resultado.
-7. Acontecimientos y presentación
-El combate y el torneo comunican acontecimientos: inicio de combate, acción realizada (ataque básico o técnica), eliminación, resultado del combate (ronda, ganadora y vida total de cada pareja al terminar) y proclamación. Cada acontecimiento guarda los datos del momento en que ocurrió. Deben poder sumarse nuevos interesados sin modificar la lógica del torneo. Dos componentes son obligatorios:
+Una acción puede ser:
 
-Heraldo Imperial: presenta los acontecimientos por pantalla. Es la única clase del sistema que escribe en pantalla, incluido lo que muestra el main.
-Cronista de la Secta: registra los acontecimientos y permite consultar el historial. Con los resultados registrados arma la tabla de posiciones: las parejas ordenadas por la última ronda del torneo que jugaron, en empate por la vida total con la que terminaron su último combate y luego por identificador. Al terminar el torneo, el main le pide la tabla al Cronista y el Heraldo la presenta.
-8. Pruebas
-Crear una batería de pruebas unitarias con JUnit 5 para técnicas, combatientes, escuelas, equipamiento, parejas, combate y torneo. Cada regla de las secciones 4, 5 y 6 debe tener al menos una prueba que la demuestre; en el informe, indiquen qué prueba cubre cada regla. Como mínimo:
+- ataque básico;
+- técnica.
 
-Una misma técnica daña diferente según el tipo del ejecutor.
-No se ejecuta una técnica sin energía o sin usos restantes.
-Los usos se conservan entre combates; vida y energía se recuperan.
-El compañero no puede usar una técnica mientras el primero conserve usos de ella.
-Equipar un cuarto objeto o una categoría repetida se rechaza sin cambios.
-Al quitar un equipamiento que sube la vida máxima, la vida actual se recorta.
-Un caído no actúa ni es elegido como objetivo.
-Elección de objetivo y desempate al límite de asaltos.
-Inscripciones duplicadas y cantidad de parejas inválida se rechazan.
-La tabla de posiciones queda ordenada por última ronda jugada y vida total final
-Dos torneos armados igual producen el mismo campeón y el mismo historial.
-Las pruebas de combate y de torneo verifican a través del estado de los objetos o del historial del Cronista, nunca leyendo la salida por pantalla.
+El ataque básico no consume energía, no tiene límite de usos y no participa de la regla del compañero.
 
-9. Bonus
-Las siguientes funcionalidades son adicionales y tienen una dificultad similar. Debe implementarse al menos una.
+Una técnica requiere energía suficiente y usos disponibles.
 
-Efectos temporales: un efecto que permanece activo una cantidad de turnos del combatiente afectado (veneno, regeneración). Definir cuándo se aplica, cuánto dura y qué sucede al terminar.
-Combatiente reactivo: un combatiente cambia su comportamiento ante un acontecimiento; por ejemplo, potencia su próximo ataque cuando cae su compañero. Debe activarse y terminar según reglas definidas.
+Criterio predeterminado:
 
-Interfaz
-Se evaluará el correcto funcionamiento del sistema utilizando dos enfoques simultáneos:
+1. técnica de recuperación si falta vida;
+2. técnica defensiva si no hay una defensa activa;
+3. técnica ofensiva con más usos restantes;
+4. ataque básico si ninguna técnica es posible.
 
-Pruebas unitarias con JUnit de las funcionalidades y de las reglas.
-Un main que configure escuelas, cree combatientes preparados por ellas, forme parejas y ejecute el torneo completo, mostrando los resultados a través del Heraldo.
-Ejemplo de main (no exhaustivo; los nombres son orientativos):
+En caso de empate, se elige la primera técnica según el orden de la escuela. El grupo puede definir otro criterio, pero debe ser determinista y estar documentado.
 
+### Objetivos
+
+Los ataques básicos y las técnicas ofensivas apuntan al rival en pie con menor vida actual. En caso de empate, se elige al combatiente de menor identificador.
+
+Las técnicas defensivas y de recuperación se aplican al ejecutor.
+
+### Vida y energía
+
+- al llegar a cero de vida, el combatiente queda fuera de combate;
+- un combatiente caído no actúa ni puede ser objetivo;
+- al comenzar cada asalto, los combatientes en pie recuperan una cantidad fija de energía;
+- la energía no puede superar el máximo;
+- al comenzar cada combate, todos recuperan vida y energía al máximo, incluso quienes habían caído en combates anteriores;
+- el grupo debe definir los valores iniciales.
+
+### Técnicas y regla del compañero
+
+Cuando un integrante usa una técnica, su compañero no puede usarla mientras el primero conserve usos de esa técnica y siga en pie.
+
+El compañero puede usarla si:
+
+- el primer combatiente agota sus usos;
+- el primer combatiente queda fuera de combate;
+- comienza un nuevo combate.
+
+Cada combatiente puede usar cada técnica cinco veces durante todo el torneo. Este registro no se reinicia entre combates.
+
+### Duración y desempate
+
+El grupo debe fijar un límite de asaltos por combate.
+
+Si se alcanza ese límite, gana la pareja con mayor vida total. La vida total es la suma de la vida actual de sus integrantes; un caído aporta cero.
+
+Si también hay empate, gana la pareja de menor identificador.
+
+### Reproducibilidad
+
+El combate debe ser determinista: ante el mismo estado inicial debe producir el mismo resultado e historial.
+
+## 7. Acontecimientos y presentación
+
+El combate y el torneo deben comunicar:
+
+- inicio de combate;
+- acción realizada;
+- ataque básico o uso de técnica;
+- eliminación;
+- resultado del combate;
+- ronda;
+- pareja ganadora;
+- vida total de cada pareja;
+- proclamación del campeón.
+
+Cada acontecimiento debe conservar los datos del momento en que ocurrió. Deben poder agregarse nuevos interesados sin modificar la lógica del torneo.
+
+### Componentes obligatorios
+
+#### Heraldo Imperial
+
+Presenta los acontecimientos por pantalla. Es la única clase del sistema que escribe en pantalla, incluido lo que muestra `main`.
+
+#### Cronista de la Secta
+
+Registra los acontecimientos y permite consultar el historial. Con los resultados registrados arma la tabla de posiciones ordenada por:
+
+1. última ronda alcanzada;
+2. vida total final;
+3. identificador de pareja.
+
+Al finalizar el torneo, `main` debe solicitar la tabla al Cronista y pedir al Heraldo que la presente.
+
+## 8. Pruebas unitarias
+
+Se debe crear una batería de pruebas con JUnit 5 para:
+
+- técnicas;
+- combatientes;
+- escuelas;
+- equipamiento;
+- parejas;
+- combate;
+- torneo.
+
+Cada regla de las secciones 4, 5 y 6 debe tener al menos una prueba asociada y el informe debe indicar qué prueba cubre cada regla.
+
+Como mínimo se debe probar:
+
+- una misma técnica daña diferente según el tipo del ejecutor;
+- no se ejecuta una técnica sin energía o sin usos restantes;
+- los usos se conservan entre combates, mientras vida y energía se recuperan;
+- el compañero no puede usar una técnica mientras el primero conserve usos;
+- equipar un cuarto objeto o repetir una categoría se rechaza sin cambios;
+- quitar un equipamiento que aumenta la vida máxima recorta la vida actual;
+- un caído no actúa ni puede ser objetivo;
+- elección de objetivo y desempate al límite de asaltos;
+- inscripciones duplicadas y cantidad inválida de parejas;
+- tabla ordenada por última ronda y vida final;
+- dos torneos iguales producen el mismo campeón e historial.
+
+Las pruebas de combate y torneo deben verificar el estado de los objetos o el historial del Cronista, nunca leer la salida por pantalla.
+
+## 9. Bonus
+
+Se debe implementar al menos una de estas funcionalidades:
+
+### Efectos temporales
+
+Un efecto activo durante una cantidad definida de turnos del combatiente afectado, como veneno o regeneración.
+
+Debe definirse:
+
+- cuándo se aplica;
+- cuánto dura;
+- qué ocurre cuando termina.
+
+### Combatiente reactivo
+
+Un combatiente modifica su comportamiento ante un acontecimiento, por ejemplo potenciando su próximo ataque cuando cae su compañero.
+
+Debe definirse cuándo se activa y cuándo termina.
+
+## Interfaz y ejecución
+
+El sistema se evaluará mediante dos enfoques simultáneos:
+
+1. pruebas unitarias con JUnit;
+2. un `main` que configure escuelas, cree combatientes preparados, forme parejas y ejecute el torneo completo mostrando los resultados mediante el Heraldo.
+
+Ejemplo simplificado:
+
+```java
 public class TorneoDeLosInmortales {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    // Escuela = configuración: técnicas y equipamiento iniciales.
+        Escuela escuelaDeLaEspada = new Escuela(
+            "Escuela de la Espada Celestial",
+            List.of(new CorteDeLosMilAmaneceres()),
+            List.of(new EspadaCelestial())
+        );
 
-    Escuela escuelaDeLaEspada = new Escuela(
+        Escuela palacioDelVacio = new Escuela(
+            "Palacio del Vacío",
+            List.of(
+                new DominioDeLaNada(),
+                new MeditacionDelInmortal()
+            ),
+            List.of(new AnilloEspiritual())
+        );
 
-      "Escuela de la Espada Celestial",
+        CreadorCombatientes creador = new CreadorCombatientes();
 
-      List.of(new CorteDeLosMilAmaneceres()),
+        Combatiente aurelio = creador.crear(
+            "Cultivador de la Espada",
+            "Aurelio",
+            escuelaDeLaEspada
+        );
 
-      List.of(new EspadaCelestial()));
+        Combatiente nebula = creador.crear(
+            "Hechicero del Vacío",
+            "Nébula",
+            palacioDelVacio
+        );
 
-    Escuela palacioDelVacio = new Escuela("Palacio del Vacío",
+        Combatiente kael = creador.crear(
+            "Monje del Cuerpo Celestial",
+            "Kael",
+            palacioDelVacio
+        );
 
-      List.of(new DominioDeLaNada(), new MeditacionDelInmortal()),
+        Pareja primera = new Pareja(1, aurelio, nebula);
 
-      List.of(new AnilloEspiritual()));
-
-
-    // La creación de combatientes está centralizada.
-
-    CreadorCombatientes creador = new CreadorCombatientes();
-
-    Combatiente aurelio = creador.crear(
-
-      "Cultivador de la Espada", "Aurelio", escuelaDeLaEspada);
-
-    Combatiente nebula = creador.crear(
-
-      "Hechicero del Vacío", "Nébula", palacioDelVacio);
-
-    Combatiente kael = creador.crear(
-
-      "Monje del Cuerpo Celestial", "Kael", palacioDelVacio);
-
-    Combatiente darian = creador.crear(
-
-      "Cultivador de la Espada", "Darian", escuelaDeLaEspada);
-
-
-    Torneo torneo = new Torneo();
-
-    // Registrar al Heraldo y al Cronista como interesados.
-
-    Pareja primera = new Pareja(1, aurelio, nebula);
-
-    torneo.inscribir(primera);
-
-    // Crear los demás combatientes e inscribir las otras tres parejas.
-
-    torneo.iniciar();
-
-    // El Heraldo anuncia a los Dos Santos Supremos; después, el main
-
-    // le pide la tabla al Cronista y el Heraldo la presenta.
-
-  }
-
+        Torneo torneo = new Torneo();
+        torneo.inscribir(primera);
+        torneo.iniciar();
+    }
 }
+```
 
+Se recomienda preparar varios escenarios para mostrar las distintas características implementadas.
 
-Sugerimos tener varios escenarios preparados, para mostrar todas las características desarrolladas.
+## Entrega
 
-Entrega
-El trabajo se realizará en forma grupal, con equipos de 4 a 6 personas.
+La entrega se realiza en grupos de cuatro a seis integrantes e incluye:
 
-Se espera que la entrega incluya: el proyecto (código y pruebas), el diagrama de clases y un informe que contenga al menos carátula, índice, introducción, desarrollo, conclusiones y referencias (APA).
+- proyecto con código fuente;
+- pruebas unitarias;
+- diagrama de clases;
+- informe con carátula, índice, introducción, desarrollo, conclusiones y referencias en formato APA.
 
-Habrá una defensa y presentación oral en la fecha designada.
+También habrá una defensa y presentación oral en la fecha designada.
 
-Se valora la claridad del diseño acorde al nivel de la materia; la sobreingeniería no suma.
+Se valora la claridad del diseño acorde al nivel de la materia. La sobreingeniería no suma.
 
-Anexo: Glosario
-Escuela: configuración que define las técnicas y el equipamiento iniciales de un combatiente; no determina su tipo.
-Técnica: acción con efecto propio y costo de energía, con usos limitados por torneo.
-Ataque básico: acción sin costo de energía ni límite de usos; no es una técnica.
-Pareja: unidad que participa en el torneo, formada por dos combatientes.
-Ronda: etapa del torneo; en cada ronda se juegan los cruces y las parejas ganadoras avanzan.
-Cruce: enfrentamiento entre dos parejas dentro de una ronda; se resuelve con un combate.
-Combate: desarrollo de un cruce, dividido en asaltos; termina cuando una pareja queda sin integrantes en pie o al alcanzar el límite de asaltos.
-Asalto: unidad del combate en la que cada pareja juega su turno completo.
-Turno: parte del asalto en la que los integrantes en pie de una pareja realizan una acción cada uno.
-Acontecimiento: hecho del combate o del torneo que se comunica a los interesados, como el Heraldo y el Cronista.
+## Glosario
+
+- **Escuela:** configuración que define técnicas y equipamiento iniciales; no determina el tipo de combatiente.
+- **Técnica:** acción con efecto propio y costo de energía, con usos limitados por torneo.
+- **Ataque básico:** acción sin costo de energía ni límite de usos; no es una técnica.
+- **Pareja:** unidad formada por dos combatientes.
+- **Ronda:** etapa del torneo en la que se juegan cruces y avanzan las parejas ganadoras.
+- **Cruce:** enfrentamiento entre dos parejas dentro de una ronda.
+- **Combate:** desarrollo de un cruce, dividido en asaltos.
+- **Asalto:** unidad del combate en la que cada pareja realiza su turno completo.
+- **Turno:** parte del asalto en la que los integrantes en pie de una pareja realizan una acción.
+- **Acontecimiento:** hecho del combate o del torneo que se comunica a interesados como el Heraldo y el Cronista.
