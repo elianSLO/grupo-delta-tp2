@@ -1,5 +1,6 @@
 package com.inmortales.combate;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +10,7 @@ import com.inmortales.combate.estrategia.EstrategiaCombate;
 import com.inmortales.eventos.Evento;
 import com.inmortales.eventos.GestorEventos;
 import com.inmortales.eventos.TipoEvento;
+import com.inmortales.eventos.VidaIntegrante;
 import com.inmortales.modelo.Combatiente;
 import com.inmortales.modelo.Pareja;
 import com.inmortales.modelo.Tecnica;
@@ -101,7 +103,8 @@ public class Combate {
                 pareja1.getVidaTotal(),
                 pareja2.getId(),
                 pareja2.getVidaTotal(),
-                ganadora.getId()
+                ganadora.getId(),
+                registrarVidasIntegrantes()
             );
 
             return ganadora;
@@ -119,6 +122,23 @@ public class Combate {
             Integer vidaPareja2,
             Integer idParejaGanadora) {
 
+        publicarEvento(tipo, descripcion, idCombatiente, idObjetivo,
+            idPareja1, vidaPareja1, idPareja2, vidaPareja2,
+            idParejaGanadora, List.of());
+    }
+
+    private void publicarEvento(
+            TipoEvento tipo,
+            String descripcion,
+            Integer idCombatiente,
+            Integer idObjetivo,
+            Integer idPareja1,
+            Integer vidaPareja1,
+            Integer idPareja2,
+            Integer vidaPareja2,
+            Integer idParejaGanadora,
+            List<VidaIntegrante> vidasIntegrantes) {
+
         Evento evento = new Evento(
             tipo,
             descripcion,
@@ -130,10 +150,30 @@ public class Combate {
             vidaPareja1,
             idPareja2,
             vidaPareja2,
-            idParejaGanadora
+            idParejaGanadora,
+            vidasIntegrantes
         );
 
         gestorEventos.publicar(evento);
+    }
+
+    // Foto de la vida de cada integrante al terminar el combate
+    private List<VidaIntegrante> registrarVidasIntegrantes() {
+
+        List<VidaIntegrante> vidas = new ArrayList<>();
+
+        for (Pareja pareja : List.of(pareja1, pareja2)) {
+            for (Combatiente combatiente : pareja.getCombatientes()) {
+                vidas.add(new VidaIntegrante(
+                    pareja.getId(),
+                    combatiente.getId(),
+                    combatiente.getNombre(),
+                    combatiente.getVida()
+                ));
+            }
+        }
+
+        return vidas;
     }
 
     private void prepararCombatientes() {
@@ -173,7 +213,25 @@ public class Combate {
 
     private void ejecutarTurno(Combatiente combatiente) {
 
-        combatiente.aplicarEfectosInicioTurno();
+        int danioVeneno = combatiente.aplicarEfectosInicioTurno();
+
+        if (danioVeneno > 0) {
+            int turnosRestantes = combatiente.getTurnosVeneno();
+
+            publicarEvento(
+                TipoEvento.EFECTO_TEMPORAL,
+                combatiente.getNombre() + " sufre " + danioVeneno
+                    + " puntos de daño por veneno"
+                    + (turnosRestantes > 0
+                        ? (turnosRestantes == 1
+                            ? " (le queda 1 turno)."
+                            : " (le quedan " + turnosRestantes + " turnos).")
+                        : " y el veneno se termina."),
+                combatiente.getId(),
+                null,
+                null, null, null, null, null
+            );
+        }
 
         if (!combatiente.estaEnPie()) {
             verificarEliminacion(combatiente);
@@ -260,6 +318,7 @@ public class Combate {
 
         int vidaAnterior = objetivo.getVida();
         int energiaAnterior = objetivo.getEnergia();
+        int venenoAnterior = objetivo.getTurnosVeneno();
 
         tecnica.ejecutar(ejecutor, objetivo);
 
@@ -267,7 +326,8 @@ public class Combate {
             TipoEvento.USO_TECNICA,
             ejecutor.getNombre() + " utiliza " + tecnica.getNombre()
                 + " sobre " + objetivo.getNombre()
-                + describirEfecto(objetivo, vidaAnterior, energiaAnterior)
+                + describirEfecto(objetivo, vidaAnterior, energiaAnterior,
+                    venenoAnterior)
                 + ".",
             ejecutor.getId(),
             objetivo.getId(),
@@ -280,7 +340,8 @@ public class Combate {
     private String describirEfecto(
             Combatiente objetivo,
             int vidaAnterior,
-            int energiaAnterior) {
+            int energiaAnterior,
+            int venenoAnterior) {
 
         int diferenciaVida = objetivo.getVida() - vidaAnterior;
         int energiaQuitada = energiaAnterior - objetivo.getEnergia();
@@ -301,6 +362,12 @@ public class Combate {
             detalle.append(" y le quita ")
                 .append(energiaQuitada)
                 .append(" puntos de energía");
+        }
+
+        if (objetivo.getTurnosVeneno() > venenoAnterior) {
+            detalle.append(" y lo envenena por ")
+                .append(objetivo.getTurnosVeneno())
+                .append(" turnos");
         }
 
         if (detalle.length() == 0 && objetivo.tieneDefensaActiva()) {

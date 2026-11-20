@@ -24,13 +24,15 @@ public class CronistaSecta implements ObservadorEventos {
             registrarResultado(
                 evento.getIdPareja1(),
                 evento.getVidaPareja1(),
-                evento.getNumeroRonda()
+                evento.getNumeroRonda(),
+                evento.getVidasIntegrantes()
             );
 
             registrarResultado(
                 evento.getIdPareja2(),
                 evento.getVidaPareja2(),
-                evento.getNumeroRonda()
+                evento.getNumeroRonda(),
+                evento.getVidasIntegrantes()
             );
         }
     }
@@ -38,15 +40,23 @@ public class CronistaSecta implements ObservadorEventos {
     private void registrarResultado(
             Integer idPareja,
             Integer vidaFinal,
-            int ronda) {
+            int ronda,
+            List<VidaIntegrante> vidasIntegrantes) {
 
         if (idPareja == null || vidaFinal == null) {
             return;
         }
 
+        // Nos quedamos con los integrantes de esta pareja
+        List<VidaIntegrante> integrantes = vidasIntegrantes.stream()
+            .filter(v -> v.idPareja() == idPareja)
+            .toList();
+
+        // put reemplaza el resultado anterior: la tabla usa la vida
+        // del último combate, no la suma de todas las rondas.
         resultados.put(
             idPareja,
-            new ResultadoPareja(idPareja, ronda, vidaFinal)
+            new ResultadoPareja(idPareja, ronda, vidaFinal, integrantes)
         );
     }
 

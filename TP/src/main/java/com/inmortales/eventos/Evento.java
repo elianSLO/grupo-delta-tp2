@@ -1,5 +1,6 @@
 package com.inmortales.eventos;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Evento {
@@ -20,6 +21,9 @@ public class Evento {
 
     private final Integer idParejaGanadora;
 
+    // Solo lo completa FIN_COMBATE: la vida de cada integrante al terminar.
+    private final List<VidaIntegrante> vidasIntegrantes;
+
     public Evento(
             TipoEvento tipo,
             String descripcion,
@@ -33,6 +37,26 @@ public class Evento {
             Integer vidaPareja2,
             Integer idParejaGanadora) {
 
+        this(tipo, descripcion, numeroRonda, numeroAsalto,
+            idCombatiente, idObjetivo,
+            idPareja1, vidaPareja1, idPareja2, vidaPareja2,
+            idParejaGanadora, List.of());
+    }
+
+    public Evento(
+            TipoEvento tipo,
+            String descripcion,
+            int numeroRonda,
+            int numeroAsalto,
+            Integer idCombatiente,
+            Integer idObjetivo,
+            Integer idPareja1,
+            Integer vidaPareja1,
+            Integer idPareja2,
+            Integer vidaPareja2,
+            Integer idParejaGanadora,
+            List<VidaIntegrante> vidasIntegrantes) {
+
     	this.tipo = Objects.requireNonNull(tipo);
     	this.descripcion = Objects.requireNonNull(descripcion);
         this.numeroRonda = numeroRonda;
@@ -44,6 +68,9 @@ public class Evento {
         this.idPareja2 = idPareja2;
         this.vidaPareja2 = vidaPareja2;
         this.idParejaGanadora = idParejaGanadora;
+        this.vidasIntegrantes = List.copyOf(
+            Objects.requireNonNull(vidasIntegrantes)
+        );
     }
 
     public TipoEvento getTipo() {
@@ -88,5 +115,9 @@ public class Evento {
 
     public Integer getIdParejaGanadora() {
         return idParejaGanadora;
+    }
+
+    public List<VidaIntegrante> getVidasIntegrantes() {
+        return vidasIntegrantes;
     }
 }

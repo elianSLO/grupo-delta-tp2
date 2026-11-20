@@ -346,11 +346,35 @@ public abstract class Combatiente {
         turnosVeneno = turnos;
     }
 
-    public void aplicarEfectosInicioTurno() {
-        if (turnosVeneno > 0 && estaEnPie()) {
-            recibirDanio(danioVenenoPorTurno);
-            turnosVeneno--;
+    // Aplica los efectos temporales al comienzo del turno del combatiente.
+    // El veneno es daño interno: no lo reducen la armadura, la defensa
+    // activa ni el multiplicador del Monje.
+    // Devuelve el daño que recibió (0 si no estaba envenenado).
+    public int aplicarEfectosInicioTurno() {
+        if (turnosVeneno <= 0 || !estaEnPie()) {
+            return 0;
         }
+
+        int vidaAnterior = vida;
+        perderVida(danioVenenoPorTurno);
+        turnosVeneno--;
+
+        return vidaAnterior - vida;
+    }
+
+    public int getTurnosVeneno() {
+        return turnosVeneno;
+    }
+
+    // Resta vida directamente, sin pasar por las defensas.
+    public void perderVida(int cantidad) {
+        if (cantidad < 0) {
+            throw new IllegalArgumentException(
+                "La cantidad no puede ser negativa."
+            );
+        }
+
+        vida = Math.max(0, vida - cantidad);
     }
 
     // Igualdad por identificador
